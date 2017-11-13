@@ -1,0 +1,8 @@
+# ignore all logfiles and tempfile
+/log/*
+/tmp/*
+!/log/.keep
+!/log/.keep
+
+.idea
+.DS_store
