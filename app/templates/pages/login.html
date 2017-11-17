@@ -5,16 +5,26 @@
     {% if error %}
         <p class="alert alert-danger"><strong>Error:</strong> {{ error }}</p>
     {% endif %}
-    <h1>Login</h1>
+    <h1 style="text-align: center">Login</h1>
 
     <form method="post" style="text-align: center">
         <dl>
-            <dt>Username:</dt>
-            <dd><input type="text" name="username" value="{{
-                    request.form.username}}"></dd>
-            <dt>Password:</dt>
-            <dd><input type="password" name="password"></dd>
+            <div class="col-xs-2 col-centered col-xs-offset-5">
+                <div class="row-xs-3">
+                    <label for="usr">Usuario</label>
+                    <dd><input class="form-control" type="text" name="username" id="usr" value="{{
+                            request.form.username}}"></dd>
+                </div>
+
+                <div class="row-xs-3" style="margin-top:10px">
+                    <label for="pw">Contraseña</label>
+                    <dd><input class="form-control" type="password" id="pw" name="password"></dd>
+                </div>
+                <div class="row-xs-3" style="margin-top:10px">
+                    <button type="submit" class="btn btn-success" value="login">Ingresar</button>
+                </div>
+
+            </div>
         </dl>
-    <p><input type="submit" value="login"></p>
     </form>
 {% endblock %}

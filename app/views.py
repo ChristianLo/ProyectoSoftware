@@ -36,4 +36,3 @@ def login():
             flash('You were successfully logged in', category='success')
             return redirect(url_for('index'))
     return dict(error=error)
-
