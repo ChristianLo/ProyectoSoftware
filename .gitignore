@@ -2,7 +2,12 @@
 /log/*
 /tmp/*
 !/log/.keep
-!/log/.keep
 
 .idea
 .DS_store
+
+app/*.pyc
+
+
+app/__pycache__
+app/__pycache__/*.pyc
