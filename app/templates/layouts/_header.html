@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -10,13 +10,18 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Inicio</a></li>
-        <li><a href="#">Menu</a></li>
-        <li><a href="#">Compra de cupones</a></li>
-        <li><a href="#">Contacto</a></li>
+        <li><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li><a href="{{ url_for('menu') }}">Menu</a></li>
+        <li><a href="{{ url_for('compra') }}">Compra de cupones</a></li>
+        <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          {% if session['admin'] or session['user']%}
+              <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+          {% else %}
+              <li><a href=""><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
+          {% endif %}
       </ul>
     </div>
   </div>
