@@ -1,0 +1,28 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li><a href="{{ url_for('menu') }}">Menu</a></li>
+        <li><a href="{{ url_for('compra') }}">Compra de cupones</a></li>
+        <li><a href="{{ url_for('contacto') }}">Contacto</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          {% if session['admin'] or session['user']%}
+              <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+          {% else %}
+              <li><a href=""><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
+          {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

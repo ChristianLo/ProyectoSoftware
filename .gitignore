@@ -1,0 +1,12 @@
+# ignore all logfiles and tempfile
+/log/*
+/tmp/*
+!/log/.keep
+
+.idea
+.DS_store
+
+app/*.pyc
+
+__pycache__/
+app/__pycache__/
