@@ -23,6 +23,16 @@ CREATE TABLE cupon_detalle(cupon_id INTEGER, producto_id INTEGER, cantidad INTEG
 CREATE TABLE promocion(id SERIAL PRIMARY KEY, precio INTEGER);
 CREATE TABLE promocion_detalle(promo_id INTEGER, producto_id INTEGER, cantidad INTEGER);
 """
+try:
+    cur.execute(sql)
+    conn.commit()
+except psycopg2.ProgrammingError:
+    pass
+
+
+def closed():
+    status = cur.connection
+    print(bool(status.closed))
 
 
 def get_email(id_usuario):
@@ -56,9 +66,17 @@ def get_cupon():
         print(error)
 
 
-print(get_email(1))
+def get_productos():
+    try:
+        cur.execute("""SELECT nombre, detalle FROM  productos""")
+        productos = cur.fetchall()
+        if not productos:
+            return None, 'info'
+        return productos
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+
 # queda con 255 el varchar
-# cur.execute(sql)
-conn.commit()
 cur.close()
 conn.close()
