@@ -57,48 +57,52 @@ def contacto():
 
 # ------------------------- Comprar cupon y verficar pago de cupon ---------------
 
-@app.route('/pago/<id>', methods=['POST', 'GET'])
-def pago(id):
+@app.route('/pago/<nombre>', methods=['POST', 'GET'])
+@templates('compra.html')
+def pago(nombre):
     # id hace referencia al producto a comprar y obtener
     # como: nombre, valor, precio unitario
+    if request.method == 'POST':
+        get_productos()
 
-    datos, message = get_productos(id)
-    if datos is None and message is 'info':
-        flash('Producto no encontrado', category=message)
-        return redirect(url_for(''))
-    """
-    preference = {
-        'items': [
-            {
-                'id': id_cupon
-                'title': nombre_produto
-                'quantity: 1  # dado que se compra un cupon
-                'curreny_id': 'CLP'
-                'unit_price': precio
+        datos, message = get_productos(id)
+        if datos is None and message is 'info':
+            flash('Producto no encontrado', category=message)
+            return redirect(url_for(''))
+        """
+        preference = {
+            'items': [
+                {
+                    'id': id_cupon
+                    'title': nombre_produto
+                    'quantity: 1  # dado que se compra un cupon
+                    'curreny_id': 'CLP'
+                    'unit_price': precio
+                }
+            ],
+            'payer': {
+                'name': 'username'
+                'email: user_email
             }
-        ],
-        'payer': {
-            'name': 'username'
-            'email: user_email
+            'expires': true
         }
-        'expires': true
-    }
-    """
+        """
 
-    preference = {
-        "items": [
-            {
-                "title": "HandsRolls",
-                "quantity": 1,
-                "currency_id": "CLP",  # Available currencies at: https://api.mercadopago.com/currencies
-                "unit_price": 2000.0
-            }
-        ]
-    }
-    preferenceResult = mp.create_preference(preference)
+        preference = {
+            "items": [
+                {
+                    "title": "HandsRolls",
+                    "quantity": 1,
+                    "currency_id": "CLP",  # Available currencies at: https://api.mercadopago.com/currencies
+                    "unit_price": 2000.0
+                }
+            ]
+        }
+        preferenceResult = mp.create_preference(preference)
 
-    url = preferenceResult['response']['init_point']
-    return redirect(url)
+        url = preferenceResult['response']['init_point']
+        return redirect(url)
+    return dict(productos=get_productos(all=True))
 
 
 @app.route('/verificar_pagos/')
@@ -229,7 +233,7 @@ def get_cupon():
         return 'cupones no disponible', 'info'
 
 
-def get_productos(id='-1', all=False):
+def get_productos(nombre='-1', all=False):
     productos = None
     try:
         if all:
@@ -239,7 +243,7 @@ def get_productos(id='-1', all=False):
             cur.execute("""SELECT nombre, detalle FROM  productos""")
             productos = cur.fetchone()
         else:
-            cur.execute("""SELECT nombre, detalle FROM productos WHERE id = %s""", id)
+            cur.execute("""SELECT nombre, detalle FROM productos WHERE nombre = %s""", nombre)
             productos = cur.fetchone()
     except(Exception, psycopg2.DatabaseError) as error:
         print(error)

@@ -37,5 +37,4 @@ class CreateUser(FlaskForm):
     ])
 
 
-class Gestionar(FlaskForm):
-    pass
+class Comprar(FlaskForm):
