@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, IntegerField
+from wtforms import StringField, BooleanField, PasswordField, IntegerField, SelectField
 from wtforms.validators import *
 
 
@@ -38,3 +38,8 @@ class CreateUser(FlaskForm):
 
 
 class Comprar(FlaskForm):
+    comprar = SelectField('elementos',
+                          choices=[()])
+
+    def agregar(self, elementos):
+        choice = elementos
