@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 from flask import flash, redirect, request, url_for, session, json
 from mercadopago import MP
 
@@ -89,8 +91,8 @@ def pago(id):
     return redirect(url)
 
 
-@app.route('/verificar_pagos/<id>')
-def verficar_pagos(id: int):
+@app.route('/verificar_pagos/')
+def verficar_pagos():
     # mp = MP(ACCESS_TOKEN)
     if session['admin'] == 'vendedor':
         lista_pagos = []

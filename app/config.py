@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 host = "localhost"
 port = 4243
 user = "tics"
