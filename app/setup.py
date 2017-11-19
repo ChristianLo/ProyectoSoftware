@@ -14,7 +14,7 @@ cur = conn.cursor()  # type: psycopg2.extensions.cursor
 
 sql = """
 CREATE TABLE sucursal( id SERIAL PRIMARY KEY , id_adm_local INTEGER , calle VARCHAR, nombre VARCHAR , comuna VARCHAR, ciudad VARCHAR, region VARCHAR, telefono INTEGER);
-CREATE TABLE usuario(id SERIAL PRIMARY KEY, tipo VARCHAR, nombre VARCHAR, rut INTEGER, password VARCHAR, telefono INTEGER , email VARCHAR );
+CREATE TABLE usuario(id SERIAL PRIMARY KEY, tipo VARCHAR, nombre VARCHAR, rut INTEGER, password VARCHAR, telefono INTEGER , email VARCHAR, nickname VARCHAR() );
 CREATE TABLE productos(id SERIAL PRIMARY KEY , nombre VARCHAR , cantidad INTEGER, detalle VARCHAR);
 CREATE TABLE ventas(num_venta SERIAL PRIMARY KEY , tipo INTEGER, cliente_id INTEGER, fechahora TIMESTAMP);
 CREATE TABLE ventas_detalle(num_venta INTEGER, tipo_compra INTEGER, id_compra INTEGER, monto INTEGER , cantidad INTEGER);
@@ -35,17 +35,14 @@ def closed():
     print(bool(status.closed))
 
 
-def get_email(id_usuario):
+def insert_usuario(nickname, nombre, rut, password, telefono, email):
     try:
-        if type(id_usuario) is int:
-            id_usuario = str(id_usuario)
-        cur.execute("""SELECT email FROM usuario WHERE id = %s""", id_usuario)
-        email = cur.fetchone()
-        print(email)
-        if not email:
-            return None, 'info'
-        return email, 'success'
-
+        cur.execute("""
+        INSERT INTO usuario (tipo, nickname, nombre, rut, password, telefono, email)
+        VALUES ('5', %s, %s, %s, %s, %s, %s);
+        """, (nickname, nombre, rut, password, telefono, email))
+        conn.commit()
+        return  'Usuario creado','success'
     except (Exception, psycopg2.DatabaseError) as e:
         print(e)
 
@@ -75,6 +72,8 @@ def get_productos():
         return productos
     except(Exception, psycopg2.DatabaseError) as error:
         print(error)
+
+
 
 
 # queda con 255 el varchar

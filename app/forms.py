@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, BooleanField, PasswordField
+from wtforms import StringField, BooleanField, PasswordField, IntegerField
 from wtforms.validators import *
 
 
@@ -15,5 +15,8 @@ class CreateUser(Form):
         DataRequired(),
         EqualTo('confim', message='Password must match')])
     confirm = PasswordField('Repeat Password')
+    nombre = StringField('Nombre', validators=[DataRequired()])
+    rut = IntegerField('Rut', validators=[DataRequired()])
+    telefono = IntegerField('Telefono', validators=[DataRequired()])
     correo = StringField('Email', validators=[Length(min=6, max=35), Email()])
 

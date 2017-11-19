@@ -3,7 +3,7 @@ from mercadopago import MP
 
 from app import app, templates
 from .forms import CreateUser
-
+from .setup import *
 
 CLIENT_ID = '553621602157005'
 CLIENT_SECRET = 'op1Jwd2cQAjGTQ19b9TcqrtSaPTzgwT6'
@@ -141,6 +141,6 @@ def create():
     form = CreateUser(request.form)
     if request.method == 'POST' and form.validate():
         # funcion para recibir datos de usuario
-        flash('Gracias por registrarte.')
+        mensaje, tipo = insert_usuario(*form.data)
         return redirect(url_for('login'))
     return dict(form=form)
