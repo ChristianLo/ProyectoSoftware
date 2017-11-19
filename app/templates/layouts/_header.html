@@ -19,7 +19,7 @@
           {% if session['admin'] or session['user']%}
               <li><a href="{{ url_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
           {% else %}
-              <li><a href=""><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+              <li><a href="{{ url_for('create') }}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
               <li><a href="{{ url_for('login') }}"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
           {% endif %}
       </ul>

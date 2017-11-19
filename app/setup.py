@@ -1,7 +1,10 @@
 # -*- coding=utf-8 -*-
 
+import datetime
+
 import psycopg2
-from config import *
+
+from .config import *
 
 conn = psycopg2.connect("dbname=%s host=%s user=%s password=%s" %
                         (database, host, user, password))  # type: psycopg2.extensions.connection
@@ -25,26 +28,20 @@ CREATE TABLE cupon_detalle(cupon_id INTEGER, producto_id INTEGER, cantidad INTEG
 CREATE TABLE promocion(id SERIAL PRIMARY KEY, precio INTEGER);
 CREATE TABLE promocion_detalle(promo_id INTEGER, producto_id INTEGER, cantidad INTEGER);
 """
-try:
-    cur.execute(sql)
-    conn.commit()
-except psycopg2.ProgrammingError:
-    pass
 
 
 def closed():
     status = cur.connection
-    print(bool(status.closed))
 
 
 def insert_usuario(nickname, nombre, rut, password, telefono, email):
     try:
         cur.execute("""
-        INSERT INTO usuario (tipo, nickname, nombre, rut, password, telefono, email)
+        INSERT INTO usuario (tipo, username, nombre, rut, password, telefono, email)
         VALUES ('5', %s, %s, %s, %s, %s, %s);
         """, (nickname, nombre, rut, password, telefono, email))
         conn.commit()
-        return  'Usuario creado','success'
+        return 'Usuario creado', 'success'
     except (Exception, psycopg2.DatabaseError) as e:
         print(e)
 
@@ -65,19 +62,56 @@ def get_cupon():
         print(error)
 
 
-def get_productos():
+def get_productos(id='-1', all=False):
     try:
-        cur.execute("""SELECT nombre, detalle FROM  productos""")
-        productos = cur.fetchall()
+        if all:
+            cur.execute("""SELECT * FROM productos""")
+            return cur.fetchall()
+        if id == '-1':
+            cur.execute("""SELECT nombre, detalle FROM  productos""")
+            productos = cur.fetchone()
+        else:
+            cur.execute("""SELECT nombre, detalle FROM productos WHERE id = %s""", id)
+            productos = cur.fetchone()
         if not productos:
             return None, 'info'
-        return productos
+        return productos, True
+
     except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 
+def get_user(username, password):
+    try:
+        cur.execute("""
+        SELECT nombre, tipo, id FROM usuario 
+        WHERE username = %s AND password = %s""",
+                    (username, password))
+        accept = cur.fetchone()
+        if accept:
+            return accept, True
+        return 'error', 'danger'
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
 
-# queda con 255 el varchar
-cur.close()
-conn.close()
+def get_ventas(id):
+    try:
+        fecha_hoy = datetime.datetime.now()
+        fecha_inicio = datetime.datetime(
+            fecha_hoy.year,
+            fecha_hoy.month,
+            1,  # dia
+            0,  # hora
+            0  # minutos
+        )
+        cur.execute("""
+            
+        """)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+
+conn.commit()
+cur.closed()
+conn.closed()

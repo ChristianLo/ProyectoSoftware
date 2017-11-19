@@ -1,0 +1,2 @@
+WTF_CSRF_ENABLE = True
+WTF_CSRF_SECRET_KEY = 'never guess'

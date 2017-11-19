@@ -6,6 +6,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = 'development key'
+app.config.from_object('config')
 
 
 def templates(template=None):
