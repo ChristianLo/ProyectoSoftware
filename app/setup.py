@@ -1,9 +1,10 @@
 import psycopg2
 from config import *
 
-conn = psycopg2.connect("dbname=%s host=%s user=%s password=%s" % (database, host, user, password))
+conn = psycopg2.connect("dbname=%s host=%s user=%s password=%s" %
+                        (database, host, user, password))  # type: psycopg2.extensions.connection
 
-cur = conn.cursor()
+cur = conn.cursor()  # type: psycopg2.extensions.cursor
 
 # sql = """ DROP SCHEMA public CASCADE;
 # CREATE SCHEMA public;
@@ -24,17 +25,35 @@ CREATE TABLE promocion_detalle(promo_id INTEGER, producto_id INTEGER, cantidad I
 """
 
 
-def get_email(id):
+def get_email(id_usuario):
     try:
-        if type(id) is int:
-            id = str(id)
-        cur.execute("""SELECT email FROM usuario WHERE id = %s""", id)
-        email = cur.fetchall()
+        if type(id_usuario) is int:
+            id_usuario = str(id_usuario)
+        cur.execute("""SELECT email FROM usuario WHERE id = %s""", id_usuario)
+        email = cur.fetchone()
+        print(email)
         if not email:
             return None, 'info'
-        return email[0][0], 'success'
-    except psycopg2.Error as e:
+        return email, 'success'
+
+    except (Exception, psycopg2.DatabaseError) as e:
         print(e)
+
+
+def get_cupon():
+    try:
+        cur.execute("""SELECT id, precio FROM cupon""")
+        cupones = cur.fetchall()
+        cur.execute("""
+        SELECT productos FROM cupon_detalle 
+        WHERE cupon_id = (SELECT id FROM cupon)"""
+                    )
+        productos = cur.fetchall()
+        if cupones and productos:
+            return dict(cupones=cupones, productos=productos)
+        return 'cupones no disponible', 'info'
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
 
 print(get_email(1))
