@@ -12,6 +12,8 @@ from .forms import CreateUser, LoginForm
 
 conn = psycopg2.connect("dbname=%s host=%s user=%s password=%s" %
                         (database, host, user, password))  # type: psycopg2.extensions.connection
+
+
 cur = conn.cursor()
 
 CLIENT_ID = '553621602157005'
@@ -44,8 +46,12 @@ def menu():
 @app.route('/compra')
 @templates('compra.html')
 def compra():
-    # cupones disponibles
-    pass
+    productos, message = get_productos(all=True)
+    if productos == (None, 'info'):
+        flash('Error en cargar', category='info')
+        pass
+    else:
+        return dict(productos=productos)
 
 
 @app.route('/contacto')
@@ -57,55 +63,37 @@ def contacto():
 
 # ------------------------- Comprar cupon y verficar pago de cupon ---------------
 
-@app.route('/pago/<nombre>', methods=['POST', 'GET'])
-@templates('compra.html')
-def pago(nombre):
+@app.route('/pago', methods=['POST'])
+def pago():
     # id hace referencia al producto a comprar y obtener
     # como: nombre, valor, precio unitario
-    if request.method == 'POST':
-        get_productos()
 
-        datos, message = get_productos(id)
+    if request.method == 'POST' and session['user']:
+        datos, message = get_productos(nombre=request.form['producto'], id=True)
         if datos is None and message is 'info':
             flash('Producto no encontrado', category=message)
-            return redirect(url_for(''))
-        """
+            return redirect(url_for('compra'))
+
         preference = {
             'items': [
                 {
-                    'id': id_cupon
-                    'title': nombre_produto
-                    'quantity: 1  # dado que se compra un cupon
-                    'curreny_id': 'CLP'
-                    'unit_price': precio
+                    'id': datos[0],
+                    'title': datos[1],
+                    'quantity': int(request.form['cantidad']),  # dado que se compra un cupon
+                    'curreny_id': 'CLP',
+                    'unit_price': int(datos[2])
                 }
             ],
-            'payer': {
-                'name': 'username'
-                'email: user_email
-            }
-            'expires': true
         }
-        """
 
-        preference = {
-            "items": [
-                {
-                    "title": "HandsRolls",
-                    "quantity": 1,
-                    "currency_id": "CLP",  # Available currencies at: https://api.mercadopago.com/currencies
-                    "unit_price": 2000.0
-                }
-            ]
-        }
         preferenceResult = mp.create_preference(preference)
 
         url = preferenceResult['response']['init_point']
         return redirect(url)
-    return dict(productos=get_productos(all=True))
+    pass
 
 
-@app.route('/verificar_pagos/')
+@app.route('/verificar_pagos')
 def verficar_pagos():
     # mp = MP(ACCESS_TOKEN)
     if session['gerente_sucursal']:
@@ -143,8 +131,7 @@ def login():
                 elif datos[1] is '3':
                     session['gerente_sucursal'] = True
                     session['id'] = datos[2]
-                else:
-                    session['user'] = True
+                session['user'] = True
                 flash('Ha iniciado correctamente.', 'success')
                 return redirect(url_for('index'))
             flash(datos, category=tipo)
@@ -233,14 +220,17 @@ def get_cupon():
         return 'cupones no disponible', 'info'
 
 
-def get_productos(nombre='-1', all=False):
+def get_productos(nombre='-1', all=False, id=False):
     productos = None
     try:
         if all:
-            cur.execute("""SELECT * FROM productos""")
-            return cur.fetchall()
+            cur.execute("""SELECT nombre, cantidad, detalle FROM productos""")
+            productos = cur.fetchall()
         if id == '-1':
             cur.execute("""SELECT nombre, detalle FROM  productos""")
+            productos = cur.fetchone()
+        elif nombre and id:
+            cur.execute("""SELECT id, nombre, cantidad FROM productos""")
             productos = cur.fetchone()
         else:
             cur.execute("""SELECT nombre, detalle FROM productos WHERE nombre = %s""", nombre)

@@ -37,9 +37,4 @@ class CreateUser(FlaskForm):
     ])
 
 
-class Comprar(FlaskForm):
-    comprar = SelectField('elementos',
-                          choices=[()])
 
-    def agregar(self, elementos):
-        choice = elementos

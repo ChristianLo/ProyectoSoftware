@@ -6,45 +6,31 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Producto</th>
                     <th scope="col">Detalle</th>
                     <th scope="col">Valor</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Compra</th>
                 </tr>
             </thead>
         <tbody>
         {% for producto, catidad, detalle in productos %}
             <tr>
+                <form action="/pago" method="post">
+                <th><input name="producto" type="checkbox" value="{{ producto }}"></th>
                 <td>{{ producto }}</td>
                 <td>{{ detalle }}</td>
                 <td>{{ catidad }}</td>
+                <td><input name="cantidad" type="number" value=""></td>
+                <td><button type="submit" class="btn btn-primary">Comprar</button></td>
+                </form>
             </tr>
         {% endfor %}
         </tbody>
-
+    </table>
 
     {% endif %}
-
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </tbody>
-</table>
 
 
 {% endblock %}
